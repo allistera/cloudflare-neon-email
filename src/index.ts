@@ -1,0 +1,58 @@
+import { neon } from '@neondatabase/serverless';
+import PostalMime from 'postal-mime';
+
+export interface Env {
+  DATABASE_URL: string;
+  FORWARD_EMAIL: string;
+}
+
+interface ParsedEmail {
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+  receivedAt: Date;
+}
+
+async function storeEmail(env: Env, email: ParsedEmail): Promise<void> {
+  const sql = neon(env.DATABASE_URL);
+
+  await sql`
+    INSERT INTO emails (from_address, to_address, subject, text_body, html_body, received_at)
+    VALUES (
+      ${email.from},
+      ${email.to},
+      ${email.subject},
+      ${email.text},
+      ${email.html},
+      ${email.receivedAt}
+    )
+  `;
+}
+
+export default {
+  async email(message: ForwardableEmailMessage, env: Env): Promise<void> {
+    try {
+      const parser = new PostalMime();
+      const rawEmail = await new Response(message.raw).text();
+      const parsed = await parser.parse(rawEmail);
+
+      const email: ParsedEmail = {
+        from: parsed.from?.address || 'unknown',
+        to: parsed.to?.[0]?.address || 'unknown',
+        subject: parsed.subject || '(no subject)',
+        text: parsed.text || '',
+        html: parsed.html || '',
+        receivedAt: new Date(),
+      };
+
+      await storeEmail(env, email);
+
+      await message.forward(env.FORWARD_EMAIL);
+    } catch (error) {
+      console.error('Error processing email:', error);
+      message.setReject(`Failed to process email: ${error}`);
+    }
+  },
+};

@@ -1,0 +1,9 @@
+name = "cloudflare-neon-email"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[env.production.vars]
+FORWARD_EMAIL = "allisteraall@gmail.com"
+
+# Add your Neon database connection string as a secret:
+# wrangler secret put DATABASE_URL
