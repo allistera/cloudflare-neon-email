@@ -47,8 +47,14 @@ export default {
         receivedAt: new Date(),
       };
 
-      await storeEmail(env, email);
+      // Try to store in database, but don't let it block forwarding
+      try {
+        await storeEmail(env, email);
+      } catch (dbError) {
+        console.error('Database error (continuing with forward):', dbError);
+      }
 
+      // Always forward the email regardless of database success
       await message.forward(env.FORWARD_EMAIL);
     } catch (error) {
       console.error('Error processing email:', error);
