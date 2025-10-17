@@ -13,20 +13,22 @@ interface ParsedEmail {
   text: string;
   html: string;
   receivedAt: Date;
+  read: boolean;
 }
 
 async function storeEmail(env: Env, email: ParsedEmail): Promise<void> {
   const sql = neon(env.DATABASE_URL);
 
   await sql`
-    INSERT INTO emails (from_address, to_address, subject, text_body, html_body, received_at)
+    INSERT INTO emails (from_address, to_address, subject, text_body, html_body, received_at, read)
     VALUES (
       ${email.from},
       ${email.to},
       ${email.subject},
       ${email.text},
       ${email.html},
-      ${email.receivedAt}
+      ${email.receivedAt},
+      ${email.read}
     )
   `;
 }
@@ -45,6 +47,7 @@ export default {
         text: parsed.text || '',
         html: parsed.html || '',
         receivedAt: new Date(),
+        read: false,
       };
 
       // Try to store in database, but don't let it block forwarding
@@ -55,7 +58,13 @@ export default {
       }
 
       // Always forward the email regardless of database success
-      await message.forward(env.FORWARD_EMAIL);
+      const forwardEmail = env.FORWARD_EMAIL;
+      
+      if (!forwardEmail || !forwardEmail.includes('@')) {
+        throw new Error(`Invalid FORWARD_EMAIL: ${forwardEmail}`);
+      }
+      
+      await message.forward(forwardEmail);
     } catch (error) {
       console.error('Error processing email:', error);
       message.setReject(`Failed to process email: ${error}`);
