@@ -62,7 +62,11 @@ Respond in JSON format:
   });
 
   const responseText = message.content[0].type === 'text' ? message.content[0].text : '{}';
-  const analysis = JSON.parse(responseText);
+
+  // Strip markdown code blocks if present
+  const cleanedResponse = responseText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '').trim();
+
+  const analysis = JSON.parse(cleanedResponse);
 
   return {
     isSpam: analysis.isSpam || false,
