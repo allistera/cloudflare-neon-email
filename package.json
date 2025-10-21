@@ -9,7 +9,6 @@
     "lint:fix": "eslint --fix . && prettier --write ."
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.67.0",
     "@neondatabase/serverless": "^1.0.2",
     "postal-mime": "^2.2.0"
   },
