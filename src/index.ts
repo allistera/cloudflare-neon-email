@@ -59,11 +59,11 @@ export default {
 
       // Always forward the email regardless of database success
       const forwardEmail = env.FORWARD_EMAIL;
-      
+
       if (!forwardEmail || !forwardEmail.includes('@')) {
         throw new Error(`Invalid FORWARD_EMAIL: ${forwardEmail}`);
       }
-      
+
       await message.forward(forwardEmail);
     } catch (error) {
       console.error('Error processing email:', error);
