@@ -5,10 +5,12 @@ Cloudflare Email Worker that stores incoming emails in a Neon PostgreSQL databas
 ## Setup
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
-   This installs wrangler as a dev dependency. Use it via `npx wrangler` or through npm scripts.
+
+This installs wrangler as a dev dependency. Use it via `npx wrangler` or through npm scripts.
 
 2. Set up your Neon database:
    - Create a new Neon project at https://neon.tech
@@ -16,6 +18,7 @@ npm install
    - Copy your database connection string
 
 3. Configure secrets:
+
 ```bash
 npx wrangler secret put DATABASE_URL
 # Paste your Neon connection string when prompted
@@ -37,11 +40,13 @@ npm run dev
 ### Prerequisites
 
 1. Authenticate with Cloudflare:
+
 ```bash
 npx wrangler login
 ```
 
 2. Ensure secrets are configured (if not done during setup):
+
 ```bash
 npx wrangler secret put DATABASE_URL
 # Paste your Neon connection string when prompted
@@ -50,11 +55,13 @@ npx wrangler secret put DATABASE_URL
 ### Deploy to Production
 
 Deploy the worker to Cloudflare:
+
 ```bash
 npm run deploy
 ```
 
 Or using wrangler directly:
+
 ```bash
 npx wrangler deploy
 ```
@@ -62,6 +69,7 @@ npx wrangler deploy
 ### Deploy to Specific Environment
 
 If you have multiple environments configured in `wrangler.toml`:
+
 ```bash
 npx wrangler deploy --env production
 ```
@@ -69,6 +77,7 @@ npx wrangler deploy --env production
 ### Verify Deployment
 
 After deployment, wrangler will output the worker URL. You can also check:
+
 ```bash
 npx wrangler deployments list
 ```
@@ -76,6 +85,7 @@ npx wrangler deployments list
 ### Configure Email Routing
 
 After deploying, configure email routing in Cloudflare Dashboard:
+
 1. Go to your domain in Cloudflare Dashboard
 2. Navigate to Email > Email Routing
 3. Enable Email Routing if not already enabled
@@ -86,6 +96,7 @@ After deploying, configure email routing in Cloudflare Dashboard:
 ### Tail Logs
 
 Monitor real-time logs:
+
 ```bash
 npx wrangler tail
 ```
@@ -109,6 +120,7 @@ FORWARD_EMAIL = "your-email@example.com"
 ```
 
 For different environments:
+
 ```toml
 [vars]
 FORWARD_EMAIL = "dev@example.com"
