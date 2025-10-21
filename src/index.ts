@@ -64,7 +64,14 @@ Respond in JSON format:
   const responseText = message.content[0].type === 'text' ? message.content[0].text : '{}';
 
   // Strip markdown code blocks if present
-  const cleanedResponse = responseText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '').trim();
+  let cleanedResponse = responseText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/, '').trim();
+
+  // Extract JSON object from response (find content between first { and last })
+  const jsonStart = cleanedResponse.indexOf('{');
+  const jsonEnd = cleanedResponse.lastIndexOf('}');
+  if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+    cleanedResponse = cleanedResponse.substring(jsonStart, jsonEnd + 1);
+  }
 
   const analysis = JSON.parse(cleanedResponse);
 
