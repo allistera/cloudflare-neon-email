@@ -8,3 +8,6 @@ FORWARD_EMAIL = "allisteraall@gmail.com"
 
 # Add your Neon database connection string as a secret:
 # wrangler secret put DATABASE_URL
+
+# Add your Anthropic API key as a secret:
+# wrangler secret put ANTHROPIC_API_KEY
